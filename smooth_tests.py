@@ -190,5 +190,9 @@ class FindNeighborhoodTestCase(unittest.TestCase):
         self.assertEqual(find_neighborhood(coords, coords[0]), (None, None))
 
 
+class MaxErrorTestCase(unittest.TestCase):
+    pass
+
+
 if __name__ == '__main__':
     unittest.main()

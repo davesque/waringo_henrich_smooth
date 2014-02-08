@@ -95,3 +95,25 @@ def find_neighborhood(points, p):
         i += 1
 
     return (left_point, right_point)
+
+
+def max_error(points, start, end):
+    """
+    Returns the maximum deviation for the exclusive range (neighborhood) of
+    points specified by the given start and end points.
+    """
+    if not points:
+        return None
+
+    # Flip range if start.i > end.i
+    if start.i > end.i:
+        start, end = end, start
+
+    # Get deviations for all points inside of the neighborhood's range
+    ds = [
+        point_to_line_distance(start, points[i], end)
+        for i in range(start.i + 1, end.i)
+    ]
+
+    # Return maximum point deviation
+    return max(ds)
