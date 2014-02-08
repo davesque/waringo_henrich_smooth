@@ -62,32 +62,6 @@ def point_to_line_distance(p1, p2, p3):
     return fabs(d)
 
 
-"""
-/**
- * Finds the indexes of neighboring, non-removed points for the point `p` in
- * the point list `points`.
- */
-function findNeighborhood(points, p) {
-  var removed, left, right, i, j, k;
-
-  if ( _.isEmpty(points) ) return [null, null];
-
-  j = p.i;
-  removed = _.pluck(points, "r");
-
-  left = _.first(removed, j);
-  right = _.rest(removed, j + 1);
-
-  i = _.lastIndexOf(left, false);
-  k = _.indexOf(right, false);
-
-  if ( k !== -1 ) k += j + 1;
-
-  return [i === -1 ? null : points[i], k === -1 ? null : points[k]];
-}
-"""
-
-
 def find_neighborhood(points, p):
     """
     Finds neighboring, non-removed points for the point `p` in the point list
