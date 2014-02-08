@@ -5,6 +5,21 @@ from math import (
     pow,
     sqrt,
 )
+import collections
+
+
+Point = collections.namedtuple('Point', ['x', 'y'])
+
+
+class PointWrapper(object):
+    def __init__(self, x, y, i):
+        self.x = x
+        self.y = y
+        self.r = False
+        self.i = i
+
+    def __repr__(self):
+        return 'PointWrapper(x={0}, y={1}, i={2})'.format(self.x, self.y, self.i)
 
 
 def point_to_point_distance(p1, p2):
@@ -147,3 +162,53 @@ def max_error(points, start, end):
     ]
 
     return max(ds) if ds else None
+
+
+def waringo_henrich_smooth(points, d_lim, max_steps=None):
+    """
+    Smooths a piecewise linear path described by a list of 2D points to within
+    the specified maximum deviation `d_lim`.  The value `max_steps` may be
+    optionally specified to limit the number of iterations when the algorithm
+    is run.
+    """
+    points_len = len(points)
+
+    def set_deviation(p):
+        # Don't set deviation if p is None or if p is an end point
+        if not p or p.i == 0 or p.i == points_len - 1:
+            return
+
+        left_point, right_point = find_neighborhood(points, p)
+        p.d = max_error(points, left_point, right_point)
+
+    # Copy and annotate points
+    points = [PointWrapper(p.x, p.y, i) for i, p in enumerate(points)]
+
+    removable = points[1:-1]
+
+    for p in removable:
+        set_deviation(p)
+
+    steps = 0
+    while True:
+        if max_steps and steps >= max_steps:
+            break
+
+        remaining = [p for p in removable if p.r is False]
+
+        if not remaining:
+            break
+
+        smallest = min(remaining, key=lambda p: p.d)
+
+        if smallest.d < d_lim:
+            smallest.r = True
+            left_point, right_point = find_neighborhood(points, smallest)
+            set_deviation(left_point)
+            set_deviation(right_point)
+        else:
+            break
+
+        steps += 1
+
+    return [Point(p.x, p.y) for p in points if p.r is False]
