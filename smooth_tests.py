@@ -6,7 +6,7 @@ import math
 
 from smooth import (
     point_to_point_distance, point_to_line_distance, find_neighborhood,
-    root_mean_square, root_mean_square_error,
+    root_mean_square, root_mean_square_error, max_error,
 )
 
 
@@ -244,6 +244,24 @@ class RootMeanSquareError(ErrorTestCase):
 
     def test_it_should_return_none_for_an_empty_list(self):
         self.assertTrue(root_mean_square_error([], None, None) is None)
+
+
+class MaxErrorTestCase(ErrorTestCase):
+    def test_it_should_return_the_maximum_deviation_within_a_certain_point_range(self):
+        self.assertEqual(max_error(self.points1, self.points1[0], self.points1[2]), 5)
+        self.assertEqual(max_error(self.points1, self.points1[0], self.points1[3]), 5)
+        self.assertEqual(max_error(self.points1, self.points1[0], self.points1[6]), 5)
+        self.assertAlmostEqual(max_error(self.points2, self.points2[0], self.points2[6]), 140.7214, 4)
+
+    def test_it_should_return_a_correct_value_even_if_the_start_and_end_points_are_swapped(self):
+        self.assertEqual(max_error(self.points1, self.points1[6], self.points1[0]), 5)
+        self.assertAlmostEqual(max_error(self.points2, self.points2[6], self.points2[0]), 140.7214, 4)
+
+    def test_it_should_return_none_for_a_zero_length_range(self):
+        self.assertTrue(max_error(self.points1, self.points1[0], self.points1[0]) is None)
+
+    def test_it_should_return_none_for_an_empty_list(self):
+        self.assertTrue(max_error([], None, None) is None)
 
 
 if __name__ == '__main__':

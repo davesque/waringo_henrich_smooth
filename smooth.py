@@ -146,5 +146,4 @@ def max_error(points, start, end):
         for i in range(start.i + 1, end.i)
     ]
 
-    # Return maximum point deviation
-    return max(ds)
+    return max(ds) if ds else None
