@@ -6,6 +6,7 @@ import math
 
 from smooth import (
     point_to_point_distance, point_to_line_distance, find_neighborhood,
+    root_mean_square, root_mean_square_error,
 )
 
 
@@ -190,8 +191,59 @@ class FindNeighborhoodTestCase(unittest.TestCase):
         self.assertEqual(find_neighborhood(coords, coords[0]), (None, None))
 
 
-class MaxErrorTestCase(unittest.TestCase):
-    pass
+class RootMeanSquareTestCase(unittest.TestCase):
+    def test_it_should_return_the_root_mean_square_of_values_in_a_list(self):
+        self.assertAlmostEqual(root_mean_square([1, 2, 3, 4, 5]), 3.3166, 4)
+        self.assertAlmostEqual(root_mean_square([10, 20, 30, 40, 50]), 33.1662, 4)
+        self.assertAlmostEqual(root_mean_square([-10, -20, 30, 40, 50]), 33.1662, 4)
+
+    def test_it_should_work_for_single_value_lists(self):
+        self.assertEqual(root_mean_square([1]), 1)
+        self.assertEqual(root_mean_square([12345]), 12345)
+        self.assertEqual(root_mean_square([-12345]), 12345)
+
+    def test_it_should_return_none_for_an_empty_list(self):
+        self.assertTrue(root_mean_square([]) is None)
+
+
+class ErrorTestCase(unittest.TestCase):
+    def setUp(self):
+        self.points1 = [
+            AnnotatedPoint(0, 0, 0, 0),
+            AnnotatedPoint(5, 5, 1, 0),
+            AnnotatedPoint(10, 0, 2, 0),
+            AnnotatedPoint(15, 0, 3, 0),
+            AnnotatedPoint(20, 5, 4, 0),
+            AnnotatedPoint(25, 0, 5, 0),
+            AnnotatedPoint(30, 0, 6, 0),
+        ]
+        self.points2 = [
+            AnnotatedPoint(0, 0, 0, 0),
+            AnnotatedPoint(5, 6, 1, 0),
+            AnnotatedPoint(10, 10, 2, 0),
+            AnnotatedPoint(9, 132, 3, 0),
+            AnnotatedPoint(20, 155, 4, 0),
+            AnnotatedPoint(25, 120, 5, 0),
+            AnnotatedPoint(30, 10, 6, 0),
+        ]
+
+
+class RootMeanSquareError(ErrorTestCase):
+    def test_it_should_return_the_root_mean_square_of_deviations_within_a_certain_point_range(self):
+        self.assertEqual(root_mean_square_error(self.points1, self.points1[0], self.points1[2]), 5)
+        self.assertAlmostEqual(root_mean_square_error(self.points1, self.points1[0], self.points1[3]), 3.5355, 4)
+        self.assertAlmostEqual(root_mean_square_error(self.points1, self.points1[0], self.points1[6]), 3.1623, 4)
+        self.assertAlmostEqual(root_mean_square_error(self.points2, self.points2[0], self.points2[6]), 95.9779, 4)
+
+    def test_it_should_return_a_correct_value_even_if_the_start_and_end_points_are_swapped(self):
+        self.assertAlmostEqual(root_mean_square_error(self.points1, self.points1[6], self.points1[0]), 3.1623, 4)
+        self.assertAlmostEqual(root_mean_square_error(self.points2, self.points2[6], self.points2[0]), 95.9779, 4)
+
+    def test_it_should_return_none_for_a_zero_length_range(self):
+        self.assertTrue(root_mean_square_error(self.points1, self.points1[0], self.points1[0]) is None)
+
+    def test_it_should_return_none_for_an_empty_list(self):
+        self.assertTrue(root_mean_square_error([], None, None) is None)
 
 
 if __name__ == '__main__':

@@ -97,6 +97,37 @@ def find_neighborhood(points, p):
     return (left_point, right_point)
 
 
+def root_mean_square(l):
+    """
+    Returns the root mean square of values in a list `l`.
+    """
+    try:
+        return sqrt(sum([i * i for i in l]) / len(l))
+    except ZeroDivisionError:
+        return None
+
+
+def root_mean_square_error(points, start, end):
+    """
+    Returns the root mean square deviation for the exclusive range
+    (neighborhood) of points specified by the given start and end points.
+    """
+    if not points:
+        return None
+
+    # Flip range if start.i > end.i
+    if start.i > end.i:
+        start, end = end, start
+
+    # Get deviations for all points inside of the neighborhood's range
+    ds = [
+        point_to_line_distance(start, points[i], end)
+        for i in range(start.i + 1, end.i)
+    ]
+
+    return root_mean_square(ds)
+
+
 def max_error(points, start, end):
     """
     Returns the maximum deviation for the exclusive range (neighborhood) of
