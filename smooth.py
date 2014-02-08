@@ -5,7 +5,6 @@ from math import (
     pow,
     sqrt,
 )
-import operator
 
 
 def point_to_point_distance(p1, p2):
